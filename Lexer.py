@@ -1,11 +1,10 @@
 import re
 class Token:
-    NUMBER = 0
-    IDENTIFIER = 1
-    STRING = 2
-    PUNCT = 3
-    EMPTY = 4
-    EOF = 5
+    NUMBER = "NUMBER"
+    STRING = "STRING"
+    PUNCT = "PUNCT"
+    EMPTY = "EMPTY"
+    EOF = "EOF"
     
     def __init__(self, lineNumber, value, type):
         self.__lineNumber = lineNumber
@@ -38,7 +37,7 @@ class Token:
 
 
 class Lexer:
-    symbolRegrex = "([A-Z_a-z][A-Z_a-z0-9]*)|([1-9][0-9]*)|(==|>=|<=|>|<|\{|\})|{\".*\"}|(\s+)"
+    symbolRegrex = "([A-Z_a-z][A-Z_a-z0-9]*)|([1-9][0-9]*)|(==|>=|<=|=|\+|\-|>|<|\{|\})|{\".*\"}|(\s+)"
     def __init__(self, testStr):
         self.__regrex = re.compile(Lexer.symbolRegrex)
         self.__code = testStr
@@ -68,7 +67,14 @@ class Lexer:
         
 
 def main():
-    l = Lexer(" 1\"\"abc\"   { <9abc")
+    code = '''
+while i < 10 {
+    sum = sum + i
+    i = i + 1
+}
+sum
+'''
+    l = Lexer(code)
     while True:
         token = l.getToken()
         if token.isEof():
