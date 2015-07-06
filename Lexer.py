@@ -3,7 +3,9 @@ class Token:
     NUMBER = 0
     IDENTIFIER = 1
     STRING = 2
-    EOF = 3
+    PUNCT = 3
+    EMPTY = 4
+    EOF = 5
     
     def __init__(self, lineNumber, value, type):
         self.__lineNumber = lineNumber
@@ -19,11 +21,17 @@ class Token:
     def isString(self):
         return self.__type == Token.STRING
 
+    def isEmpty(self):
+        return self.__type == Token.EMPTY
+
     def isEof(self):
         return self.__type == Token.EOF
 
     def getValue(self):
         return self.__value
+
+    def getType(self):
+        return self.__type
 
 
 
@@ -35,24 +43,39 @@ class Lexer:
         self.__regrex = re.compile(Lexer.symbolRegrex)
         self.__code = testStr
         self.__startPosition = 0
+        self.__iter = 0
 
-    def printResult(self):
-        result = self.regrex.match(self.code)
-        if result:
-            str= result.group(4)
-            print str
-            print len(str)
-            if len(str.strip()) == 0:
-                print "spaces"
-            else:
-                print str
-        else:
-            print "fuck"
-
-    
-
-
-
-l = Lexer(" 1\"\"abc\"   { <9abc")
-l.printResult()
+    def getToken(self):
+        if not self.__iter:
+            self.__iter = self.__regrex.finditer(self.__code)
+            if not self.__iter:
+                return Token(0,0,Token.EOF)
+        try:
+            result = self.__iter.next()
+            if result:
+                if result.group(4):
+                    return Token(0, 0, Token.EMPTY)
+                elif result.group(1):
+                    return Token(0, result.group(0), Token.STRING)
+                elif result.group(2):
+                    return Token(0, result.group(0), Token.NUMBER)
+                elif result.group(3):
+                    return Token(0, result.group(0), Token.PUNCT)
+                else:
+                    return Token(0,0,Token.EOF)
+        except StopIteration:
+            return Token(0,0,Token.EOF)
         
+
+def main():
+    l = Lexer(" 1\"\"abc\"   { <9abc")
+    while True:
+        token = l.getToken()
+        if token.isEof():
+            return
+        if token.isEmpty():
+            continue
+
+        print token.getType(), token.getValue()
+        
+main()
