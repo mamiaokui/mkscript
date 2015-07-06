@@ -30,9 +30,9 @@ class Token:
 
 
 class Lexer:
-    symbol = "([A-Z_a-z][A-Z_a-z0-9]*)|([1-9][0-9]*)|(==|>=|<=|>|<|\{|\})|{\".*\"}|(\s+)"
+    symbolRegrex = "([A-Z_a-z][A-Z_a-z0-9]*)|([1-9][0-9]*)|(==|>=|<=|>|<|\{|\})|{\".*\"}|(\s+)"
     def __init__(self, testStr):
-        self.__regrex = re.compile(Lexer.symbol)
+        self.__regrex = re.compile(Lexer.symbolRegrex)
         self.__code = testStr
         self.__startPosition = 0
 
